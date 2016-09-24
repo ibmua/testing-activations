@@ -30,7 +30,7 @@ M  (M*2 <= N)  neurons that recieve a convex function from the previous layer. F
 
 1 neuron ->
 
-Result. The previous layer couldn't be the last one, because the required result may have been negative, while our activation function was probably not. That's why there may have been a place for a bias. Scaling via weight is not important and is most likely only hurting the learning process, but whatever..
+Result. The previous layer couldn't be the last one, because the required result may have been negative, while our activation function was probably not. That's why there may have been a place for a bias. Scaling via weight is probably not important and likely is only hurting the learning process, but whatever..
 
 ![PReLU followed by ELU, or Softmax](bezier-pyramid.png)
 
