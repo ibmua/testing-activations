@@ -20,7 +20,7 @@ Result
 
 
 
-PReLU followed by one of [ELU, Softmax, Sigmoid, TanH, etc. PReLU works even better if you want to get a more linear relationship outside of learning bounds].
+[PReLU, or ELU, PELU, etc] followed by one of [ELU, Softmax, Sigmoid, TanH, etc. PReLU works even better if you want to get a more linear relationship outside of learning bounds].
 
 1 neuron ->
 
