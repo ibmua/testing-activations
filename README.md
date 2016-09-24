@@ -3,6 +3,8 @@ Testing different activation functions in neural networks. This was my old code,
 
 You'll likely need to change some paths to files. This is not intended for too broad an audience, if any. =)
 
+Blue dots are from the underlying function, red dots are from the approximation learnt by NN. Maxout seemed harder to choose hyperparameters for, worked in a narrower range of LR, as far as I recall.
+
 2 Maxout layers. 1 neuron -> Maxout -> Minout -> 1 neuron
 
 ![2 maxout layers](2-maxout.png)
