@@ -1,0 +1,16 @@
+test_iter: 0
+test_interval: 1000000
+base_lr: 0.0001
+display: 10000
+max_iter: 3000001
+lr_policy: "sigmoid"
+gamma: -3e-04
+momentum: 0.2
+weight_decay: 0.0002
+stepsize: 200000
+snapshot: 100000000
+solver_mode: GPU
+random_seed: 2
+snapshot_prefix: 	"/home/sharpy/local-net/jupyter/tests/pyramid-"
+net: 				"/home/sharpy/local-net/jupyter/tests/pyramid/pyramid-func-train.prototxt"
+type: "SGD"

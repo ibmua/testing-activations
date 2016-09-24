@@ -1,0 +1,387 @@
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+  
+  
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 2
+    }
+  }
+
+  
+
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+
+
+  input_param {
+    shape {
+      #dim: 64
+	  dim: 1
+      dim: 2
+    }
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+layer {
+  bottom: 		"in"
+  type: 													"InnerProduct"
+  name: 						"in_to_pyramid"
+  top: 							"in_to_pyramid"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									6
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+		# type: "xavier"
+		# std: 0.01
+    }
+  }
+}
+
+
+layer {
+  bottom: 				"in_to_pyramid"
+  top: 					"in_to_pyramid"
+  name: 				"in_to_pyramid_rectifier"
+  type: 													"PReLU"
+}
+
+
+
+
+layer {
+  bottom:	"in_to_pyramid"
+  name: 	"slice5"
+  type: 			'Slice'
+  top: 		"slice5A"
+  top: 		"slice5B"
+  slice_param {
+    slice_dim:		1
+	
+    slice_point:	3
+  }
+}
+
+
+
+# layer {
+  # name: 	"concat"
+  # type: 			'Eltwise'
+  # bottom:	"slice5A"
+  # bottom:	"slice5B"
+  # top:		"concat"
+  # eltwise_param {
+    # operation:		MAX
+  # }
+# }
+
+
+
+
+layer {
+  bottom: 						"slice5A"
+  type: 													"InnerProduct"
+  name: 						"group_A"
+  top: 							"group_A"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									1
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+    }
+  }
+}
+
+
+
+layer {
+  bottom: 						"slice5B"
+  type: 													"InnerProduct"
+  name: 						"group_B"
+  top: 							"group_B"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									1
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+    }
+  }
+}
+
+
+
+# layer {
+  # name: 	"maxout1"
+  # type: 			'Eltwise'
+  # bottom:	"group_A"
+  # bottom:	"group_B"
+  # top:		"maxout1"
+  # eltwise_param {
+    # operation:		MAX
+  # }
+# }
+
+
+layer {
+  bottom: "group_A"
+  bottom: "group_B"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+  name:	"concat"
+  top:	"concat"
+}
+
+
+
+layer {
+  bottom: 				"concat"
+  top: 					"concat"
+  name: 				"concat_rectifier"
+  type: 													"PReLU"
+}
+
+
+
+
+layer {
+  bottom: 						"concat"
+  type: 													"InnerProduct"
+  name: 						"maxout1"
+  top: 							"maxout1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									1
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+    }
+  }
+}
+
+
+
+
+
+# layer {
+  # type: 																		"Dropout"
+  # name: 		"maxout1_d"
+  # top: 			"maxout1"
+  # bottom: 		"maxout1"
+  # dropout_param {
+    # dropout_ratio: 								0
+  # }
+# }
+
+
+# layer {
+  # bottom:	"maxout1"
+  # type: 			"Power"
+  # name:		"reversed_maxout1"
+  # top:		"reversed_maxout1"
+  # power_param {
+	# scale:	-1
+  # }
+# }
+
+
+
+# layer {
+  # type: 			'Slice'
+  # bottom:	"reversed_maxout1"
+  # name: 	"slice_the_reversed"
+  # top: 		"slice_rev_A"
+  # top: 		"slice_rev_B"
+  # top: 		"slice_rev_C"
+  # top: 		"slice_rev_D"
+  # slice_param {
+    # slice_dim:		1
+	
+    # slice_point:	1
+    # slice_point:	2
+    # slice_point:	3
+  # }
+# }
+
+
+# layer {
+  # type: 			'Eltwise'
+  # bottom:	"group_A"
+  # bottom:	"group_B"
+  # name: 	"maxout1"
+  # top:		"maxout1"
+  # eltwise_param {
+    # operation:		MAX
+  # }
+# }
+
+
+
+
+
+
+
+# layer {
+  # type: 																		"Dropout"
+  # name: 		"minout_d"
+  # top: 			"minout"
+  # bottom: 		"minout"
+  # dropout_param {
+    # dropout_ratio: 								0
+  # }
+# }
+
+
+
+
+
+
+
+
+layer {
+  # bottom: 		"minout"
+  bottom: 		"maxout1"
+  type: 																		"InnerProduct"
+  name: 		"predicted_out"
+  top: 			"predicted_out"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 							1
+    weight_filler {
+      type: "xavier"
+		std: 0.01
+
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+
+
+
+
+layer {
+  name: 	"loss"
+  type:	 	"EuclideanLoss"
+  bottom:	"predicted_out"
+  bottom:	"out"
+  top: 		"loss"
+}

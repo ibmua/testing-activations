@@ -1,0 +1,269 @@
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+  
+  
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+
+  
+
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+
+
+  input_param {
+    shape {
+      #dim: 64
+	  dim: 1
+      dim: 1
+    }
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+layer {
+  bottom: 		"in"
+  type: 													"InnerProduct"
+  name: 						"in_to_maxout"
+  top: 							"in_to_maxout"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									12
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+		# type: "xavier"
+		# std: 0.01
+    }
+  }
+}
+
+
+
+
+
+layer {
+  bottom:	"in_to_maxout"
+  name: 	"slice5"
+  type: 			'Slice'
+  top: 		"slice5A"
+  top: 		"slice5B"
+  top: 		"slice5C"
+  # top: 		"slice5D"
+  # top: 		"slice5E"
+  slice_param {
+    slice_dim:		1
+	
+    slice_point:	4
+    slice_point:	8
+    # slice_point:	15
+    # slice_point:	20
+  }
+}
+
+
+layer {
+  name: 	"maxout1"
+  type: 			'Eltwise'
+  bottom:	"slice5A"
+  bottom:	"slice5B"
+  bottom:	"slice5C"
+  # bottom:	"slice5D"
+  # bottom:	"slice5E"
+  top:		"maxout1"
+  eltwise_param {
+    operation:		MAX
+  }
+}
+
+
+
+layer {
+  type: 																		"Dropout"
+  name: 		"maxout1_d"
+  top: 			"maxout1"
+  bottom: 		"maxout1"
+  dropout_param {
+    dropout_ratio: 								0
+  }
+}
+
+
+layer {
+  bottom:	"maxout1"
+  type: 			"Power"
+  name:		"reversed_maxout1"
+  top:		"reversed_maxout1"
+  power_param {
+	scale:	-1
+	# shift:	-50
+  }
+}
+
+
+
+layer {
+  type: 			'Slice'
+  bottom:	"reversed_maxout1"
+  name: 	"slice_the_reversed"
+  top: 		"slice_rev_A"
+  top: 		"slice_rev_B"
+  top: 		"slice_rev_C"
+  top: 		"slice_rev_D"
+  slice_param {
+    slice_dim:		1
+	
+    slice_point:	1
+    slice_point:	2
+    slice_point:	3
+  }
+}
+
+
+layer {
+  type: 			'Eltwise'
+  bottom:	"slice_rev_A"
+  bottom:	"slice_rev_B"
+  bottom:	"slice_rev_C"
+  bottom:	"slice_rev_D"
+  name: 	"minout"
+  top:		"minout"
+  eltwise_param {
+    operation:		MAX
+  }
+
+}
+
+
+
+
+
+
+
+layer {
+  type: 																		"Dropout"
+  name: 		"minout_d"
+  top: 			"minout"
+  bottom: 		"minout"
+  dropout_param {
+    dropout_ratio: 								0
+  }
+}
+
+
+
+
+
+
+
+
+layer {
+  bottom: 		"minout"
+  type: 																		"InnerProduct"
+  name: 		"predicted_out"
+  top: 			"predicted_out"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 							1
+    weight_filler {
+      type: "xavier"
+		std: 0.01
+
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+
+
+
+
+layer {
+  name: 	"loss"
+  type:	 	"EuclideanLoss"
+  bottom:	"predicted_out"
+  bottom:	"out"
+  top: 		"loss"
+}

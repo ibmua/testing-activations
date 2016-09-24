@@ -1,0 +1,173 @@
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "out"
+  type: "Input"
+
+  top: "out"
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+}
+
+layer {
+  include {
+    phase: TRAIN
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+  
+  
+  input_param {
+    shape {
+      #dim: 64
+      dim: 1
+      dim: 1
+    }
+  }
+
+  
+
+}
+layer {
+  include {
+    phase: TEST
+  }
+
+  name: "in"
+  type: "Input"
+  top: "in"
+
+
+  input_param {
+    shape {
+      #dim: 64
+	  dim: 1
+      dim: 1
+    }
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+layer {
+  bottom: 		"in"
+  type: 													"InnerProduct"
+  name: 						"in_to_elu"
+  top: 							"in_to_elu"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+	num_output:									25
+    weight_filler {
+		type: "xavier"
+		std: 0.2
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.01
+    }
+  }
+}
+
+layer {
+  bottom: 				"in_to_elu"
+  top: 					"in_to_elu"
+  name: 				"in_to_elu_rectifier"
+  type: 																		"ELU"
+  elu_param{alpha: 1.0}
+}
+
+layer {
+  type: 																		"Dropout"
+  name: 		"in_to_elu_d"
+  top: 			"in_to_elu"
+  bottom: 		"in_to_elu"
+  dropout_param {
+    dropout_ratio: 								0
+  }
+}
+
+
+
+
+
+
+
+
+layer {
+  bottom: 		"in_to_elu"
+  type: 																		"InnerProduct"
+  name: 		"predicted_out"
+  top: 			"predicted_out"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 							1
+    weight_filler {
+      type: "xavier"
+		std: 0.01
+
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+}
+
+
+
+
+layer {
+  name: 	"loss"
+  type:	 	"EuclideanLoss"
+  bottom:	"predicted_out"
+  bottom:	"out"
+  top: 		"loss"
+}

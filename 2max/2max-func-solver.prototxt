@@ -1,0 +1,16 @@
+test_iter: 0
+test_interval: 1000000
+base_lr: 0.00001
+display: 10000
+max_iter: 3000001
+lr_policy: "sigmoid"
+gamma: -3e-03
+momentum: 0.1
+weight_decay: 0.0005
+stepsize: 200000
+snapshot: 100000
+solver_mode: GPU
+random_seed: 2
+snapshot_prefix: 	"/home/sharpy/local-net/jupyter/tests/func-"
+net: 				"/home/sharpy/local-net/jupyter/tests/2max/2max-func-train.prototxt"
+solver_type: NESTEROV
