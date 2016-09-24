@@ -10,7 +10,7 @@ Blue dots are from the underlying function, red dots are from the approximation 
 
 (Maxout) Widening followed my a grouped reduction via Max operation ->
 
-(Minout) grouped reduction via Max operation down to: ->
+(Minout) grouped reduction via Min (or first [NEURONS * (-1)] and then Max) operation down to a single neuron ->
 
 1 neuron ->
 
@@ -42,3 +42,5 @@ PReLU followed by SoftMax architecture was inspired by Bezier curves https://www
 While in Maxout, especially with a larger multiplication factor, some neurons may get completely lost (at least, without an appropriate dropout - right before Max operation), in this architecture this is not possible.
 
 If you'll discover some even better architectures, please, tell. (>‿◠)✌ I think Bezier curves should be a major inspiration for good non-convex activation structures.
+
+All started from PReLU-PReLU architecture inspired by Maxout and PReLUs. Mind that all of these take more flops to compute than pure Maxout-Minout.
