@@ -18,4 +18,4 @@ PReLU followed by one of [ELU, Softmax, Sigmoid, TanH, etc]. 1 neuron -> Wide wi
 
 PReLU followed by SoftMax architecture was inspired by Bezier curves https://www.jasondavies.com/animated-bezier/ and seemed to perform same as PReLU followed by ELU. I think I did later find some article published by other people who tried something very very similar having different much less exciting inspiration, but can't find it at the moment.
 
-If you'll discover some even better architectures, please, tell. (>‿◠)✌
+If you'll discover some even better architectures, please, tell. (>‿◠)✌ I think Bezier curves should be a major inspiration for good activation functions.
