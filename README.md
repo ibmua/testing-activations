@@ -5,9 +5,19 @@ You'll likely need to change some paths to files. This is not intended for too b
 
 Blue dots are from the underlying function, red dots are from the approximation learnt by NN. Maxout seemed harder to choose hyperparameters for, worked in a narrower range of LR, as far as I recall. Approximating y=f(x) with y and x having a single dimension.
 
-2 Maxout layers. 1 neuron -> Maxout -> Minout -> 1 neuron
+
+2 Maxout layers. 1 neuron ->
+
+(Maxout) Widening followed my a grouped reduction via Max operation ->
+
+(Minout) grouped reduction via Max operation down to: ->
+
+1 neuron ->
+
+Result
 
 ![2 maxout layers](2-maxout.png)
+
 
 
 PReLU followed by one of [ELU, Softmax, Sigmoid, TanH, etc. PReLU works even better if you want to get a more linear relationship outside of learning bounds].
@@ -20,12 +30,15 @@ M  (M*2 <= N)  neurons that recieve a convex function from the previous layer. F
 
 1 neuron ->
 
-Result. The previous layer couldn't be the last one, because the required result may have been negative, while our activation function was probably not. That's why there may have been a place for bias and scaling (via weight).
+Result. The previous layer couldn't be the last one, because the required result may have been negative, while our activation function was probably not. That's why there may have been a place for a bias. Scaling via weight is not important and is most likely only hurting the learning process, but whatever..
 
 ![PReLU followed by ELU, or Softmax](bezier-pyramid.png)
 
 
 
+
 PReLU followed by SoftMax architecture was inspired by Bezier curves https://www.jasondavies.com/animated-bezier/ and seemed to perform same as PReLU followed by ELU. I think I did later find some article published by other people who tried something very very similar having different much less exciting inspiration, but can't find it at the moment.
+
+While in Maxout, especially with a larger multiplication factor, some neurons may get completely lost (at least, without an appropriate dropout - right before Max operation), in this architecture this is not possible.
 
 If you'll discover some even better architectures, please, tell. (>‿◠)✌ I think Bezier curves should be a major inspiration for good non-convex activation structures.
