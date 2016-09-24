@@ -8,7 +8,7 @@ You'll likely need to change some paths to files. This is not intended for too b
 ![2 maxout layers](2-maxout.png)
 
 
-PReLU followed by one of [ELU, Softmax, Sigmoid, TanH, etc]. 1 neuron -> Wide with PReLU -> Narrower with ELU, or Softmax -> 1 neuron
+PReLU followed by one of [ELU, Softmax, Sigmoid, TanH, etc]. 1 neuron -> Wide with PReLU -> Narrower with [ELU, Softmax, Sigmoid, TanH, etc] -> 1 neuron
 
 ![PReLU followed by ELU, or Softmax](bezier-pyramid.png)
 
